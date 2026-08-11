@@ -1,0 +1,155 @@
+---
+import Media from './Media.astro';
+import { roster } from '../config.js';
+
+// 8 panels = the 2 x 4 zone grid the cursor sweeps across
+const zones = ['n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8'];
+---
+
+<section class="section roster" id="artists">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="stamp">03 — Artists</span>
+      <span class="stamp">{roster.filter((r) => r.name).length} signed / {roster.length} slots</span>
+    </div>
+
+    <!-- the field: cursor position picks one of eight panels. move across it and
+         the image cuts, it does not crossfade — closer to flicking through a
+         crate than to a slideshow. -->
+    <div class="field" data-zone-field>
+      {
+        zones.map((z, i) => (
+          <div class="field__panel" data-zone={i} aria-hidden="true">
+            <Media seed={z} ratio="21 / 9" />
+          </div>
+        ))
+      }
+      <div class="field__idle stamp">
+        <span>Move to look</span>
+      </div>
+      <div class="field__readout stamp stamp--sig" data-zone-readout>01 / 08</div>
+    </div>
+
+    <h2 class="display roster__head" data-split>The roster is forming.</h2>
+    <p class="roster__note" data-reveal>
+      Five slots this cycle. We are filling them slowly and on purpose, because a roster is the
+      only thing a label really is.
+    </p>
+
+    <ol class="roster__list">
+      {
+        roster.map((slot) => (
+          <li class={`roster__row ${slot.name ? '' : 'roster__row--open'}`} data-reveal>
+            <span class="stamp roster__id">{slot.id}</span>
+            <span class="display roster__name">{slot.name ?? 'Unsigned'}</span>
+            <span class="stamp roster__note-cell">{slot.note}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .field {
+    position: relative;
+    aspect-ratio: 21 / 9;
+    margin-bottom: clamp(3.5rem, 10vw, 8rem);
+    background: var(--ink-raised);
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  .field__panel {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+  .field__panel :global(.media) {
+    width: 100%;
+    height: 100%;
+  }
+  /* first panel shows by default so the block is never empty on touch or before
+     the pointer arrives */
+  .field__panel[data-zone='0'] {
+    opacity: 1;
+  }
+
+  .field__idle,
+  .field__readout {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .field__idle {
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--chrome-mid);
+    transition: opacity 0.4s var(--ease);
+  }
+  .field[data-active] .field__idle {
+    opacity: 0;
+  }
+  @media (hover: none) {
+    .field__idle {
+      display: none;
+    }
+  }
+
+  .field__readout {
+    right: 0.9rem;
+    bottom: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .roster__head {
+    font-size: var(--t-h2);
+    max-width: 14ch;
+  }
+
+  .roster__note {
+    max-width: 44ch;
+    margin-top: 1.5rem;
+    color: var(--chrome-mid);
+    text-wrap: pretty;
+  }
+
+  .roster__list {
+    list-style: none;
+    padding: 0;
+    margin: clamp(3rem, 8vw, 6rem) 0 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .roster__row {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    align-items: baseline;
+    gap: 0.25rem 1.5rem;
+    padding: clamp(1rem, 2.5vw, 1.9rem) 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  @media (min-width: 760px) {
+    .roster__row {
+      grid-template-columns: 6rem 1fr auto;
+    }
+  }
+
+  .roster__name {
+    font-size: clamp(1.75rem, 5vw, 3.5rem);
+  }
+  .roster__row--open .roster__name {
+    color: var(--chrome-lo);
+  }
+
+  .roster__note-cell {
+    grid-column: 2;
+    color: var(--chrome-mid);
+  }
+  @media (min-width: 760px) {
+    .roster__note-cell {
+      grid-column: 3;
+    }
+  }
+</style>

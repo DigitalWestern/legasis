@@ -1,0 +1,122 @@
+---
+import Media from './Media.astro';
+---
+
+<section class="section manifesto" id="label">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="stamp">01 — The Label</span>
+      <span class="stamp">Legacy / Genesis</span>
+    </div>
+
+    <h2 class="display manifesto__head" data-split>
+      We put our name<br />on the <em>first</em> take.
+    </h2>
+
+    <div class="manifesto__body">
+      <div class="manifesto__col">
+        <p data-reveal>
+          Legasis exists for artists at the beginning of something permanent. The demo that
+          shouldn't work. The record nobody asked for. The take with the mistake still in it.
+        </p>
+        <p data-reveal>
+          We sign it early, then build the machinery around it — the room, the mix, the pressing,
+          the rights, the long tail — so that thirty years from now it is still earning, still
+          credited, still owned by the person who made it.
+        </p>
+      </div>
+
+      <div class="manifesto__col">
+        <p class="manifesto__pull" data-reveal>
+          Legacy isn't awarded to you later. It's a decision you make on day one.
+        </p>
+        <dl class="manifesto__facts stamp" data-reveal>
+          <div><dt>Ownership</dt><dd>Artist retains masters</dd></div>
+          <div><dt>Deals</dt><dd>Term-limited, no perpetuity</dd></div>
+          <div><dt>Splits</dt><dd>Disclosed before signature</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="manifesto__strip" data-parallax>
+      <Media seed="room-a" ratio="4 / 5" label="Room A" />
+      <Media seed="tape-01" ratio="4 / 5" label="Tape 01" />
+      <Media seed="cut-lathe" ratio="4 / 5" label="Lathe" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifesto__head {
+    font-size: var(--t-h2);
+    max-width: 16ch;
+    margin-bottom: clamp(2.5rem, 7vw, 6rem);
+  }
+  .manifesto__head em {
+    font-style: normal;
+    color: var(--red);
+  }
+
+  .manifesto__body {
+    display: grid;
+    gap: clamp(2rem, 5vw, 5rem);
+    max-width: 1200px;
+    margin-left: auto;
+  }
+  @media (min-width: 900px) {
+    .manifesto__body {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .manifesto__col {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+  .manifesto__col p {
+    color: var(--chrome-mid);
+    max-width: 46ch;
+  }
+
+  .manifesto__pull {
+    font-size: var(--t-lede);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--chrome-hi) !important;
+    text-wrap: balance;
+  }
+
+  .manifesto__facts {
+    display: grid;
+    gap: 0;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--hairline);
+  }
+  .manifesto__facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .manifesto__facts dd {
+    margin: 0;
+    color: var(--chrome-mid);
+    text-align: right;
+  }
+
+  /* three panels at staggered depths — they drift apart as you pass them */
+  .manifesto__strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.5rem, 1.6vw, 1.5rem);
+    margin-top: clamp(4rem, 12vw, 10rem);
+  }
+  .manifesto__strip :global(.media:nth-child(2)) {
+    margin-top: clamp(2rem, 8vw, 7rem);
+  }
+  .manifesto__strip :global(.media:nth-child(3)) {
+    margin-top: clamp(1rem, 3vw, 3rem);
+  }
+</style>

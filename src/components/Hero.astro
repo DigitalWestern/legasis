@@ -1,0 +1,138 @@
+---
+import { label } from '../config.js';
+---
+
+<section class="hero" id="top">
+  <div class="hero__grid" aria-hidden="true"></div>
+
+  <div class="hero__mark">
+    <!-- the PNG is the real content and the permanent fallback; the canvas
+         paints over it once WebGL is confirmed working -->
+    <img class="hero__png" src="/logo.png" alt={label.full} width="1098" height="550" fetchpriority="high" />
+    <canvas class="hero__canvas" data-chrome-logo aria-hidden="true"></canvas>
+  </div>
+
+  <p class="hero__line" data-split>Every legacy starts as a first take.</p>
+
+  <div class="hero__foot">
+    <span class="stamp">Est. {label.established}</span>
+    <a href="#label" class="hero__scroll stamp stamp--live">
+      Scroll
+      <span class="hero__scroll-track" aria-hidden="true"><i></i></span>
+    </a>
+    <span class="stamp">Independent</span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    align-items: center;
+    padding: clamp(6rem, 14vh, 9rem) var(--gutter) clamp(1.25rem, 4vh, 2.5rem);
+    overflow: hidden;
+  }
+
+  /* a faint measuring grid — the label as workshop, not gallery */
+  .hero__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, var(--hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--hairline) 1px, transparent 1px);
+    background-size: 12.5% 25%;
+    opacity: 0.55;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 45%, #000 20%, transparent 78%);
+  }
+
+  .hero__mark {
+    position: relative;
+    justify-self: center;
+    align-self: center;
+    width: min(88vw, 1100px);
+    aspect-ratio: 1098 / 550;
+  }
+
+  .hero__png,
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero__png {
+    object-fit: contain;
+  }
+
+  .hero__canvas {
+    opacity: 0;
+    transition: opacity 0.5s linear;
+  }
+  /* set by the loader once the shader is confirmed running */
+  .hero__mark[data-chrome-live] .hero__canvas {
+    opacity: 1;
+  }
+  .hero__mark[data-chrome-live] .hero__png {
+    opacity: 0;
+  }
+
+  .hero__line {
+    justify-self: center;
+    max-width: 30ch;
+    margin-block: clamp(1.5rem, 5vh, 3.5rem) 0;
+    font-size: var(--t-lede);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--chrome-mid);
+  }
+
+  .hero__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: clamp(1.5rem, 5vh, 3rem);
+  }
+
+  .hero__scroll {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  /* the cue is a slow travelling tick, not a bouncing arrow */
+  .hero__scroll-track {
+    display: block;
+    position: relative;
+    width: 74px;
+    height: 1px;
+    background: var(--hairline);
+    overflow: hidden;
+  }
+  .hero__scroll-track i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 26px;
+    background: var(--red);
+    animation: tick 2.6s var(--ease) infinite;
+  }
+  @keyframes tick {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(285%);
+    }
+  }
+
+  /* on the narrowest screens the flanking stamps crowd the cue */
+  @media (max-width: 480px) {
+    .hero__foot > .stamp:last-child {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+import { label } from '../config.js';
+---
+
+<footer class="section contact" id="contact" data-footer>
+  <div class="shell">
+    <div class="sec-head">
+      <span class="stamp">06 — Contact</span>
+      <span class="stamp">Open for demos</span>
+    </div>
+
+    <h2 class="display contact__head" data-split>Send us<br />the first take.</h2>
+
+    <p class="contact__note" data-reveal>
+      Rough is fine. Unfinished is fine. One link, one track, and who you are — that is the whole
+      submission. Every demo gets listened to, and every artist gets an answer.
+    </p>
+
+    <a class="cta" href={`mailto:${label.email}`}>
+      <span class="cta__label">{label.email}</span>
+      <span class="cta__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25">
+          <path d="M4 12h15M13 6l6 6-6 6" />
+        </svg>
+      </span>
+    </a>
+
+    <div class="contact__foot">
+      <span class="stamp">{label.full} — Est. {label.established}</span>
+      <ul class="contact__socials">
+        {
+          label.socials.map((s) => (
+            <li>
+              <a href={s.href} class="stamp">
+                {s.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <span class="stamp">All rights reserved to the artist</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .contact {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .contact__head {
+    font-size: var(--t-h1);
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .contact__note {
+    max-width: 46ch;
+    color: var(--chrome-mid);
+  }
+
+  /* the one filled element on the page. red earns it here because this is the
+     only thing we actually want a visitor to do. */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding: 1rem 1.25rem 1rem 1.6rem;
+    border: 1px solid var(--chrome-lo);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 1.6vw, 1.125rem);
+    letter-spacing: 0.04em;
+    transition:
+      border-color 0.4s var(--ease),
+      background-color 0.4s var(--ease),
+      color 0.4s var(--ease);
+  }
+  .cta:hover,
+  .cta:focus-visible {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .cta__arrow {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    overflow: hidden;
+  }
+  .cta__arrow svg {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s var(--ease);
+  }
+  .cta:hover .cta__arrow svg {
+    transform: translateX(3px);
+  }
+
+  .contact__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: clamp(5rem, 14vw, 11rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .contact__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .contact__socials a:hover {
+    color: var(--red);
+  }
+</style>

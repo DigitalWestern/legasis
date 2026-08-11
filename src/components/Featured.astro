@@ -1,0 +1,108 @@
+---
+import Media from './Media.astro';
+import { catalogue } from '../config.js';
+
+const first = catalogue[0];
+---
+
+<!-- pinned while the panel scales and the credits climb past it -->
+<section class="featured" id="releases" data-featured>
+  <div class="featured__stage">
+    <div class="featured__media" data-featured-media>
+      <Media seed="lgs-001" ratio="16 / 9" loading="eager" />
+      <div class="featured__scrim" aria-hidden="true"></div>
+    </div>
+
+    <div class="featured__overlay shell">
+      <div class="sec-head featured__head">
+        <span class="stamp">02 — First Transmission</span>
+        <span class="stamp stamp--sig">{first.status}</span>
+      </div>
+
+      <h2 class="display featured__title chrome-text" data-featured-title>{first.cat}</h2>
+
+      <dl class="featured__credits stamp" data-featured-credits>
+        <div><dt>Artist</dt><dd>{first.artist}</dd></div>
+        <div><dt>Title</dt><dd>{first.title}</dd></div>
+        <div><dt>Format</dt><dd>{first.format}</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured {
+    position: relative;
+    background: var(--ink);
+  }
+
+  .featured__stage {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .featured__media {
+    position: absolute;
+    inset: 0;
+    /* starts inset and expands to full bleed as the section is scrubbed */
+    padding: clamp(1rem, 8vw, 8rem);
+    display: grid;
+  }
+  .featured__media :global(.media) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* the panel underneath can be bright, so the scrim has to guarantee the type
+     stays legible: a vertical wash for the edges plus a centred vignette under
+     the wordmark and credits */
+  .featured__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 62% 46% at 50% 52%, rgb(5 5 5 / 0.86) 0%, rgb(5 5 5 / 0.35) 60%, transparent 100%),
+      linear-gradient(to top, rgb(5 5 5 / 0.94) 0%, rgb(5 5 5 / 0.45) 50%, rgb(5 5 5 / 0.82) 100%);
+  }
+
+  .featured__overlay {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+
+  .featured__head {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .featured__title {
+    font-size: var(--t-h1);
+    letter-spacing: -0.04em;
+  }
+
+  .featured__credits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 clamp(1.25rem, 4vw, 4rem);
+  }
+  .featured__credits > div {
+    display: flex;
+    gap: 0.6rem;
+  }
+  /* the default stamp grey vanishes against a lit panel */
+  .featured__credits dt {
+    color: var(--chrome-mid);
+  }
+  .featured__credits dd {
+    margin: 0;
+    color: var(--chrome-hi);
+  }
+</style>

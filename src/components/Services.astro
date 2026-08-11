@@ -1,0 +1,66 @@
+---
+import { services } from '../config.js';
+---
+
+<section class="section services" id="services">
+  <div class="shell">
+    <div class="sec-head">
+      <span class="stamp">05 — What We Do</span>
+      <span class="stamp">In house / partnered</span>
+    </div>
+
+    <h2 class="display services__head" data-split>Everything after the song.</h2>
+
+    <ul class="services__list" data-services>
+      {
+        services.map((s, i) => (
+          <li class="services__item" data-service>
+            <span class="stamp services__num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="display services__label">{s}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services__head {
+    font-size: var(--t-h2);
+    max-width: 12ch;
+    margin-bottom: clamp(2.5rem, 7vw, 5rem);
+  }
+
+  .services__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .services__item {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding: clamp(0.5rem, 1.4vw, 1rem) 0;
+    border-bottom: 1px solid var(--hairline);
+    /* GSAP drifts each row horizontally on scroll; this is the resting state */
+    will-change: transform;
+  }
+
+  .services__num {
+    flex: none;
+    width: 2ch;
+  }
+
+  .services__label {
+    font-size: clamp(1.6rem, 4.5vw, 3.25rem);
+    /* this list is the actual answer to "what does the label do", so it has to
+       be readable at rest rather than only on hover */
+    color: var(--chrome-mid);
+    transition: color 0.45s var(--ease);
+  }
+  .services__item:hover .services__label {
+    color: var(--chrome-hi);
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Legasis Records',
+  description = 'A record label for artists at the start of something permanent.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050505" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" as="image" href="/logo.png" />
+
+    <!-- swap the no-JS fallbacks for their animated versions only once we know
+         scripts are running, so the page is never blank on a script failure -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body>
+    <!-- curtain wipe between pages. two panels meeting at the centre line. -->
+    <div class="curtain" aria-hidden="true">
+      <div class="curtain__panel"></div>
+      <div class="curtain__panel"></div>
+    </div>
+
+    <Nav />
+
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+      </div>
+    </div>
+
+    <script>
+      import '../scripts/motion.js';
+    </script>
+
+    <style is:global>
+      /* ScrollSmoother needs these exact rules to take over the scroll */
+      #smooth-wrapper {
+        overflow: hidden;
+      }
+
+      .curtain {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        pointer-events: none;
+      }
+      .curtain__panel {
+        flex: 1;
+        background: var(--ink);
+      }
+      /* before JS runs the curtain is closed, so the first paint is black
+         instead of a flash of unstyled content mid-load */
+      .js .curtain {
+        display: flex;
+      }
+      html:not(.js) .curtain {
+        display: none;
+      }
+    </style>
+  </body>
+</html>

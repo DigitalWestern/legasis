@@ -1,0 +1,131 @@
+---
+/**
+ * Every image on the site goes through here.
+ *
+ * With no `src`, it renders a generated panel — duotone field, film grain,
+ * scanlines — that reads as a deliberate treatment rather than a missing file.
+ * Drop a real image into /public/media and pass `src`; layout, aspect ratio and
+ * the roster's hover-shift all keep working untouched.
+ */
+interface Props {
+  src?: string;
+  alt?: string;
+  /** any string — picks the generated panel's hue and grain offset */
+  seed?: string;
+  ratio?: string;
+  label?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const {
+  src,
+  alt = '',
+  seed = 'legasis',
+  ratio = '3 / 4',
+  label,
+  class: className = '',
+  loading = 'lazy',
+} = Astro.props;
+
+// deterministic per seed so panels differ from each other but never reshuffle
+let h = 0;
+for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) % 100000;
+const angle = 118 + (h % 84);
+const cx = 24 + (h % 52); // light source position, %
+const cy = 18 + ((h >> 3) % 44);
+const warm = h % 4 === 0; // one panel in four takes the red cast
+const grooved = h % 3 === 1; // one in three gets the record-groove texture
+---
+
+<figure
+  class={`media ${className}`}
+  style={`--ratio:${ratio}; --angle:${angle}deg; --cx:${cx}%; --cy:${cy}%;`}
+>
+  {
+    src ? (
+      <img src={src} alt={alt} loading={loading} decoding="async" class="media__img" />
+    ) : (
+      <div
+        class={`media__gen ${warm ? 'media__gen--warm' : ''} ${grooved ? 'media__gen--grooved' : ''}`}
+        role="img"
+        aria-label={alt || 'Placeholder artwork'}
+      />
+    )
+  }
+  {label && <figcaption class="stamp media__label">{label}</figcaption>}
+</figure>
+
+<style>
+  .media {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    background: var(--ink-raised);
+  }
+
+  .media__img,
+  .media__gen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .media__gen {
+    position: relative;
+  }
+
+  /* Generated panel. Built from what a label actually handles — a raking
+     specular across a sleeve, lacquer grain, and the ring texture of a record
+     — so an unfilled slot reads as material rather than as a broken image. */
+  .media__gen {
+    --tint-a: #cfd8e2;
+    --tint-b: #2a3138;
+    background:
+      /* raking highlight, positioned per seed */
+      radial-gradient(
+        ellipse 78% 62% at var(--cx) var(--cy),
+        rgb(255 255 255 / 0.5) 0%,
+        rgb(255 255 255 / 0.11) 34%,
+        transparent 68%
+      ),
+      /* grain */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"),
+      /* the field itself */
+        linear-gradient(var(--angle), #05070a 4%, var(--tint-b) 38%, var(--tint-a) 58%, #14181d 74%, #030405 100%);
+    background-size:
+      cover,
+      200px 200px,
+      cover;
+    background-blend-mode: screen, overlay, normal;
+  }
+
+  .media__gen--warm {
+    --tint-a: #f0503f;
+    --tint-b: #38120d;
+  }
+
+  /* concentric grooves, offset per seed so no two sit the same way */
+  .media__gen--grooved::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-radial-gradient(
+      circle at var(--cx) var(--cy),
+      rgb(0 0 0 / 0.42) 0px,
+      rgb(0 0 0 / 0.42) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+    mix-blend-mode: multiply;
+    opacity: 0.75;
+  }
+
+  .media__label {
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.7rem;
+    color: var(--chrome-mid);
+    mix-blend-mode: difference;
+  }
+</style>

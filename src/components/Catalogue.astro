@@ -1,0 +1,144 @@
+---
+import Media from './Media.astro';
+import { catalogue } from '../config.js';
+
+// the reference site spells its card numbers out; catalogue positions read
+// better as words at display size than as digits
+const words = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+---
+
+<!-- pinned stack: cards advance one at a time as the section is scrubbed on
+     desktop, and drag with inertia on touch -->
+<section class="catalogue" data-carousel>
+  <div class="catalogue__stage">
+    <div class="shell catalogue__head">
+      <span class="stamp">04 — Catalogue</span>
+      <span class="stamp">{catalogue.length} scheduled</span>
+    </div>
+
+    <div class="catalogue__mask" data-carousel-mask>
+      <ul class="catalogue__track" data-carousel-track>
+        {
+          catalogue.map((rel, i) => (
+            <li class="card" data-card>
+              <div class="card__media">
+                <Media seed={rel.cat} ratio="1 / 1" />
+              </div>
+              <div class="card__meta">
+                <span class="display card__index">{words[i]}</span>
+                <span class="stamp stamp--sig card__cat">{rel.cat}</span>
+                <span class="card__title display">{rel.title}</span>
+                <dl class="stamp card__facts">
+                  <div>
+                    <dt>Artist</dt>
+                    <dd>{rel.artist}</dd>
+                  </div>
+                  <div>
+                    <dt>Format</dt>
+                    <dd>{rel.format}</dd>
+                  </div>
+                  <div>
+                    <dt>Status</dt>
+                    <dd>{rel.status}</dd>
+                  </div>
+                </dl>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .catalogue__stage {
+    min-height: 100svh;
+    display: grid;
+    /* without an explicit minmax(0,1fr) the auto column sizes to the track's
+       max-content width, which is many screens wide, and the header centres
+       itself inside that instead of spanning the viewport */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    align-content: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding-block: clamp(4rem, 10vh, 8rem);
+    overflow: hidden;
+  }
+
+  .catalogue__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .catalogue__mask {
+    position: relative;
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .catalogue__track {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 3rem);
+    padding-inline: var(--gutter);
+    list-style: none;
+    margin: 0;
+    /* GSAP drives x on this element; do not add transitions here */
+  }
+
+  .card {
+    flex: 0 0 auto;
+    width: min(78vw, 420px);
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  .card__media {
+    filter: grayscale(1) contrast(1.15);
+    transition: filter 0.5s var(--ease);
+  }
+  .card:hover .card__media,
+  .card[data-active] .card__media {
+    filter: grayscale(0) contrast(1);
+  }
+
+  .card__meta {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .card__index {
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    color: var(--chrome-lo);
+    line-height: 0.9;
+  }
+
+  .card__title {
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    letter-spacing: -0.01em;
+  }
+
+  .card__facts {
+    display: grid;
+    gap: 0;
+    margin-top: 0.6rem;
+    border-top: 1px solid var(--hairline);
+  }
+  .card__facts > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .card__facts dd {
+    margin: 0;
+    color: var(--chrome-mid);
+  }
+</style>

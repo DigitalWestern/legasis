@@ -1,0 +1,240 @@
+---
+import { label, nav } from '../config.js';
+import Media from './Media.astro';
+---
+
+<header class="nav">
+  <a href="#top" class="nav__mark">
+    <img src="/logo.png" alt={label.full} width="1098" height="550" />
+  </a>
+
+  <div class="nav__meta stamp">
+    <span>{label.city}</span>
+    <span class="nav__clock stamp--live" data-clock={label.timezone}>--:--:--</span>
+  </div>
+
+  <button class="nav__toggle stamp" aria-expanded="false" aria-controls="flyout">
+    <span class="nav__toggle-label" data-open>Index</span>
+    <span class="nav__toggle-label" data-close>Close</span>
+    <span class="nav__bars" aria-hidden="true"><i></i><i></i></span>
+  </button>
+</header>
+
+<!-- flyout index. each row previews its section on hover, the way a sleeve
+     shows you the record before you pull it out. -->
+<nav class="flyout" id="flyout" hidden>
+  <ol class="flyout__list">
+    {
+      nav.map((item, i) => (
+        <li class="flyout__item">
+          <a href={item.href} class="flyout__link">
+            <span class="stamp flyout__num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="display flyout__label">{item.label}</span>
+          </a>
+          <div class="flyout__preview" aria-hidden="true">
+            <Media seed={item.seed} ratio="4 / 3" />
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="flyout__foot">
+    <a href={`mailto:${label.email}`} class="stamp stamp--live">{label.email}</a>
+    <ul class="flyout__socials">
+      {
+        label.socials.map((s) => (
+          <li>
+            <a href={s.href} class="stamp" aria-label={s.name}>
+              {s.short}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: clamp(0.9rem, 2vw, 1.6rem) var(--gutter);
+  }
+
+  /* past the hero the bar sits over display type, so it needs its own ground.
+     a gradient rather than a solid keeps the edge from reading as a bar. */
+  .nav::before {
+    content: '';
+    position: absolute;
+    inset: -1px 0 auto;
+    height: 190%;
+    background: linear-gradient(to bottom, rgb(5 5 5 / 0.92) 0%, rgb(5 5 5 / 0.6) 45%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.45s var(--ease);
+    pointer-events: none;
+  }
+  .nav[data-scrolled]::before {
+    opacity: 1;
+  }
+
+  .nav > * {
+    position: relative;
+  }
+
+  .nav__mark img {
+    width: clamp(84px, 9vw, 132px);
+    height: auto;
+  }
+
+  .nav__meta {
+    display: none;
+    gap: 0.9rem;
+  }
+  @media (min-width: 700px) {
+    .nav__meta {
+      display: flex;
+    }
+  }
+
+  /* tabular figures stop the clock jittering as digits change width */
+  .nav__clock {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nav__toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0;
+  }
+  .nav__toggle-label {
+    display: block;
+  }
+  .nav__toggle [data-close],
+  .nav__toggle[aria-expanded='true'] [data-open] {
+    display: none;
+  }
+  .nav__toggle[aria-expanded='true'] [data-close] {
+    display: block;
+  }
+
+  .nav__bars {
+    display: grid;
+    gap: 4px;
+    width: 22px;
+  }
+  .nav__bars i {
+    display: block;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__toggle[aria-expanded='true'] .nav__bars i:first-child {
+    transform: translateY(2.5px) rotate(12deg);
+  }
+  .nav__toggle[aria-expanded='true'] .nav__bars i:last-child {
+    transform: translateY(-2.5px) rotate(-12deg);
+  }
+
+  /* ---- flyout ---- */
+  .flyout {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(5rem, 14vh, 9rem) var(--gutter) clamp(1.5rem, 4vh, 3rem);
+    background: var(--ink);
+  }
+  .flyout[hidden] {
+    display: none;
+  }
+
+  .flyout__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .flyout__item {
+    position: relative;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .flyout__link {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(0.8rem, 3vw, 2.5rem);
+    padding: clamp(0.6rem, 1.6vh, 1.1rem) 0;
+  }
+
+  .flyout__num {
+    flex: none;
+    width: 2ch;
+  }
+
+  .flyout__label {
+    font-size: clamp(2rem, 7vw, 5.5rem);
+    color: var(--chrome-lo);
+    transition: color 0.4s var(--ease);
+  }
+  .flyout__link:hover .flyout__label,
+  .flyout__link:focus-visible .flyout__label {
+    color: var(--chrome-hi);
+  }
+
+  /* preview rides at the right edge, revealed on hover. hidden below desktop
+     where there is no hover to speak of. */
+  .flyout__preview {
+    position: absolute;
+    right: 4vw;
+    top: 50%;
+    width: clamp(180px, 17vw, 300px);
+    translate: 0 -50%;
+    opacity: 0;
+    scale: 0.94;
+    pointer-events: none;
+    transition:
+      opacity 0.45s var(--ease),
+      scale 0.45s var(--ease);
+  }
+  .flyout__item:hover .flyout__preview {
+    opacity: 1;
+    scale: 1;
+  }
+  @media (max-width: 991px), (hover: none) {
+    .flyout__preview {
+      display: none;
+    }
+  }
+
+  .flyout__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .flyout__socials {
+    display: flex;
+    gap: 1.1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .flyout__socials a:hover {
+    color: var(--red);
+  }
+</style>

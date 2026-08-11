@@ -1,0 +1,1 @@
+this is a project folder for a potential recrod label. it’s called “Legasis". we are thinking about the combo of legacy and genesis. 

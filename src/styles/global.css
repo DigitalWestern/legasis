@@ -1,0 +1,189 @@
+/* the wdth build, not the default wght-only one — the display face is set
+   expanded, which needs the width axis to actually be present */
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
+
+/* ============================================================
+   LEGASIS — tokens
+   legacy + genesis. an archive that has just started.
+   base: black. material: chrome. signal: Pantone 485.
+   ============================================================ */
+
+:root {
+  /* colour */
+  --ink: #050505;
+  --ink-raised: #0c0d0f;
+  --chrome-hi: #f2f4f7;
+  --chrome-mid: #98a1ab;
+  --chrome-lo: #414750;
+  --hairline: #1b1e22;
+  --red: #da291c; /* Pantone 485 */
+  --red-dim: #7a1710;
+
+  /* type */
+  --display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  --body: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  --mono: 'Space Mono', ui-monospace, monospace;
+
+  /* fluid scale — 380px → 1600px viewport */
+  --t-mono: clamp(0.625rem, 0.55rem + 0.3vw, 0.75rem);
+  --t-body: clamp(1rem, 0.94rem + 0.28vw, 1.1875rem);
+  --t-lede: clamp(1.375rem, 1.05rem + 1.4vw, 2.25rem);
+  --t-h2: clamp(2.5rem, 1.2rem + 5.6vw, 7rem);
+  --t-h1: clamp(3.5rem, 0.6rem + 12vw, 13rem);
+
+  /* space */
+  --rail: clamp(1rem, 3.2vw, 3.25rem);
+  --gutter: clamp(1.25rem, 4vw, 5rem);
+  --section-y: clamp(7rem, 16vh, 15rem);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---- reset ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background: var(--ink);
+  color: var(--chrome-hi);
+  font-family: var(--body);
+  font-size: var(--t-body);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+::selection {
+  background: var(--red);
+  color: #fff;
+}
+
+/* ---- primitives ---- */
+
+/* the archival stamp: mono, letterspaced, small. used for every piece of
+   metadata on the page so the whole site reads as one catalogue. */
+.stamp {
+  font-family: var(--mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chrome-lo);
+}
+.stamp--live {
+  color: var(--chrome-mid);
+}
+.stamp--sig {
+  color: var(--red);
+}
+
+/* display type. tight, wide, set in optical caps. */
+.display {
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 125%;
+  line-height: 0.86;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+/* chrome fill for large type — a static gradient that reads as brushed metal.
+   the hero logo gets the real WebGL treatment; this is its quiet cousin. */
+.chrome-text {
+  background: linear-gradient(
+    176deg,
+    #6f7883 0%,
+    #f7f9fb 18%,
+    #aeb7c1 34%,
+    #4c525a 50%,
+    #dfe5ea 64%,
+    #878f99 80%,
+    #2f343a 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shell {
+  padding-inline: var(--gutter);
+  margin-inline: auto;
+  max-width: 1760px;
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.rule {
+  height: 1px;
+  background: var(--hairline);
+  border: 0;
+}
+
+/* section header: catalogue-style. the label and the title share a baseline
+   rule, the way a spine label sits under the sleeve edge. */
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: clamp(2.5rem, 6vw, 6rem);
+}
+
+/* ---- motion base ----
+   elements that animate in start hidden, but only when JS is running,
+   so the page is fully readable with JS off or if a script fails. */
+.js [data-reveal] {
+  opacity: 0;
+}
+.js [data-split] {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal],
+  .js [data-split] {
+    opacity: 1;
+    visibility: visible;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
