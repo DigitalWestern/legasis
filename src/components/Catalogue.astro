@@ -67,6 +67,12 @@ const words = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', '
   }
 
   .catalogue__head {
+    /* .shell centres itself with auto inline margins, but auto margins on a
+       grid item beat `stretch` and shrink it to max-content. Span the column
+       explicitly and centre with justify-self instead. */
+    width: 100%;
+    margin-inline: 0;
+    justify-self: center;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
