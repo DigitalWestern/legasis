@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
+import { asset } from '../asset.js';
 
 interface Props {
   title?: string;
@@ -21,15 +22,15 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#050505" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/logo.png" />
+    <meta property="og:image" content={new URL(asset('logo.png'), Astro.site).href} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preload" as="image" href="/logo.png" />
+    <link rel="preload" as="image" href={asset('logo.png')} />
 
     <!-- swap the no-JS fallbacks for their animated versions only once we know
          scripts are running, so the page is never blank on a script failure -->

@@ -5,3 +5,6 @@ dist/
 *.log
 .env
 .env.*
+
+# reference screenshot of another studio's source; kept locally, not published
+lightandmedia-inspect-element.png

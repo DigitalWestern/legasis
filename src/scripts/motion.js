@@ -407,7 +407,8 @@ async function initChromeLogo() {
   if (navigator.connection?.saveData) return;
 
   const { mountChromeLogo } = await import('./chrome-logo.js');
-  const live = await mountChromeLogo(canvas, { src: '/logo.png', reduced });
+  const { asset } = await import('../asset.js');
+  const live = await mountChromeLogo(canvas, { src: asset('logo.png'), reduced });
   if (live) canvas.closest('.hero__mark')?.setAttribute('data-chrome-live', '');
 }
 

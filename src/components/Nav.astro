@@ -1,11 +1,12 @@
 ---
 import { label, nav } from '../config.js';
+import { asset } from '../asset.js';
 import Media from './Media.astro';
 ---
 
 <header class="nav">
   <a href="#top" class="nav__mark">
-    <img src="/logo.png" alt={label.full} width="1098" height="550" />
+    <img src={asset('logo.png')} alt={label.full} width="1098" height="550" />
   </a>
 
   <div class="nav__meta stamp">

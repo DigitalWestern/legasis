@@ -1,9 +1,10 @@
 import { defineConfig } from 'astro/config';
 
-// site/base get set when the GitHub Pages repo exists.
-// For a repo at github.com/<user>/legasis served from <user>.github.io/legasis,
-// set base: '/legasis'. For a custom domain, leave base undefined.
+// Served from https://digitalwestern.github.io/legasis, so the project name has
+// to be the base path. On a custom domain later: set `site` to that domain and
+// delete `base` entirely — otherwise every asset 404s under /legasis.
 export default defineConfig({
-  site: 'https://legasis.example.com',
+  site: 'https://digitalwestern.github.io',
+  base: '/legasis',
   build: { inlineStylesheets: 'auto' },
 });

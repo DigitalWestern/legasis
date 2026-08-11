@@ -1,5 +1,6 @@
 ---
 import { label } from '../config.js';
+import { asset } from '../asset.js';
 ---
 
 <section class="hero" id="top">
@@ -8,7 +9,7 @@ import { label } from '../config.js';
   <div class="hero__mark">
     <!-- the PNG is the real content and the permanent fallback; the canvas
          paints over it once WebGL is confirmed working -->
-    <img class="hero__png" src="/logo.png" alt={label.full} width="1098" height="550" fetchpriority="high" />
+    <img class="hero__png" src={asset('logo.png')} alt={label.full} width="1098" height="550" fetchpriority="high" />
     <canvas class="hero__canvas" data-chrome-logo aria-hidden="true"></canvas>
   </div>
 
