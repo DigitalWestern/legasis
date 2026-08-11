@@ -1,94 +1,96 @@
-# Legasis Records — landing page
+# Legasis Records
 
-Static site. Astro builds it, GitHub Pages serves it. No server, no database,
-nothing to keep running.
+The label's landing page. Astro builds static files, GitHub Pages serves them.
+Nothing runs on a server, so there's nothing to pay for and nothing that goes to
+sleep.
+
+Live at <https://digitalwestern.github.io/legasis/>
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321
+npm run dev      # localhost:4321
 npm run build    # → dist/
 ```
 
-## Editing content
+Push to `main` and it rebuilds and redeploys itself in about 40 seconds.
 
-Almost everything Haley will want to change lives in **`src/config.js`** — label
-name, city clock, email, social links, the roster, the catalogue, the services
-list. Change it there, not in the components.
+## Changing the words
 
-Headline copy sits in the component for each section (`src/components/`).
+Start in `src/config.js`. The label name, city clock, email, social links,
+roster, catalogue and services list all live there. Headlines sit in the
+individual components under `src/components/`.
 
-## Adding real photos
+Two values in that file are still made up: the `demos@` address and the Los
+Angeles timezone. The email is a live `mailto:` link, so anyone who clicks it
+right now is writing into the void. Fix it before sharing this around.
 
-Drop files into `public/media/`, then pass `src` to the `<Media>` component:
+## Photos
+
+Drop files into `public/media/` and hand the path to `<Media>`:
 
 ```astro
 <Media src="/media/artist-01.jpg" alt="…" ratio="3 / 4" />
 ```
 
-Without `src` it renders a generated panel instead — a lit sleeve, a red-cast
-field, or a vinyl-groove texture, picked deterministically from the `seed`.
-Layout, aspect ratio and the roster's cursor-driven image field all keep working
-either way, so photos can arrive one at a time.
+Leave `src` off and you get a generated panel instead. A lit sleeve, a red-cast
+field, or vinyl grooves, chosen from the `seed` string so a given slot looks the
+same on every build. Swapping a generated panel for a real photo doesn't touch
+the layout or any of the scroll behaviour, so pictures can go in one at a time
+as they arrive.
 
 ## The chrome wordmark
 
-`public/logo.png` is a transparent cut-out generated from the original
-`Logo.png`, which shipped with a solid black background.
+`public/logo.png` is a cut-out made from the original `Logo.png`, which shipped
+on a solid black background and dragged a visible box around with it. The alpha
+comes from luminance: anything brighter than roughly 9% survives, the black
+ground doesn't.
 
-On desktop, `src/scripts/chrome-logo.js` paints over it with a WebGL shader:
-the artwork's own baked-in bevel lighting is treated as a height field, sobelled
-into a surface normal, and used to reflect a procedural studio environment. That
-environment rotates with the pointer and drags with scroll, so the metal stays
-alive while the wordmark never moves.
+On desktop, `src/scripts/chrome-logo.js` paints over that PNG with a fragment
+shader. The artwork already has its bevel lighting baked in, so its luminance
+doubles as a height field. Sobel that and you have a surface normal. Reflect a
+ray off the normal into a procedural studio (three softbox strips, a lit
+ceiling, a dark floor, one red kick) and you get metal, because reflection is
+most of what makes chrome look like chrome. The studio rotates with the pointer
+and drags as you scroll, which is why the logo feels alive while never actually
+moving.
 
-It falls back to the flat PNG on mobile, under reduced-motion, on data-saver
-connections, and if WebGL fails to initialise — the `<img>` is always the real
-content and the canvas only fades in once the shader is confirmed running.
+The `<img>` is always the real content. The canvas only fades in once the shader
+is confirmed working, so mobile, reduced-motion, data-saver connections and any
+WebGL failure all quietly keep the flat PNG.
 
-To regenerate the cut-out after a logo change, the alpha comes from luminance:
-anything above ~9% brightness is opaque, the black ground falls away.
+## Deploying
 
-## Deploying to GitHub Pages
+Already wired. `.github/workflows/deploy.yml` builds and publishes on every push
+to `main`, and Pages takes its build from Actions.
 
-1. Create a repo and push:
+The thing that will bite you is **`base` in `astro.config.mjs`**. The site lives
+at a subpath, so every asset needs a `/legasis` prefix, which is what
+`src/asset.js` exists to do. Move to a custom domain and you set `site` to that
+domain and delete `base` entirely. Leave `base` in place and every asset 404s
+under a path that no longer exists.
 
-   ```bash
-   git remote add origin git@github.com:<user>/legasis.git
-   git push -u origin main
-   ```
+For a custom domain, add it under Settings → Pages and put the same domain in
+`public/CNAME` so it survives each deploy.
 
-2. In the repo: **Settings → Pages → Build and deployment → Source: GitHub
-   Actions**. That's the only setting to change.
+## Speed
 
-3. `.github/workflows/deploy.yml` builds and publishes on every push to `main`.
-
-4. **Set the URL in `astro.config.mjs`.** Serving from
-   `<user>.github.io/legasis` needs `base: '/legasis'` as well as `site`. On a
-   custom domain, set `site` to that domain and leave `base` off.
-
-Custom domain: add it under Settings → Pages, and put the same domain in a
-`public/CNAME` file so it survives each deploy.
-
-## Performance
-
-71 kB of gzipped JavaScript, almost all of it GSAP. The shader is ~3 kB and
-loads on idle, after the page is interactive. No third-party requests at
-runtime — fonts are self-hosted, and there is no analytics or tag manager.
+71 kB of gzipped JavaScript, and nearly all of that is GSAP. The shader is 3 kB
+and loads on idle, once the page is already interactive. Fonts are self-hosted
+and there's no analytics, so the page makes no third-party requests at all.
 
 ## Motion
 
-`src/scripts/motion.js` holds every animation:
+All of it lives in `src/scripts/motion.js`.
 
 | | |
 |---|---|
-| Curtain wipe | Two panels that open on load and close before navigation |
+| Curtain | Two panels that open on load and close again before navigating away |
 | Smooth scroll | GSAP ScrollSmoother |
-| Heading reveals | SplitText, per character. Anything above the fold plays on load rather than waiting for a scroll trigger it is already past |
-| Featured | Pinned; the panel bleeds out to full frame as you scrub |
-| Roster field | Cursor position picks one of eight panels on a 2×4 grid; cuts rather than crossfades |
+| Headings | SplitText, character by character. Anything above the fold plays on load instead of waiting for a scroll trigger the reader has already passed |
+| Featured | Pinned, and the panel bleeds out to full frame as you scrub |
+| Roster field | Cursor position picks one of eight panels on a 2×4 grid, cutting rather than crossfading |
 | Catalogue | Pinned horizontal scrub on desktop, drag with inertia on touch, native scrolling under reduced motion |
 | Services | Rows shear sideways in alternating directions |
 
-`prefers-reduced-motion` disables the smoother, every pin, and every scrub, and
-the page stays fully readable and navigable. It is also readable with
-JavaScript off entirely.
+Reduced motion switches off the smoother and every pin and scrub, and the page
+still reads and still navigates. It also works with JavaScript turned off.
